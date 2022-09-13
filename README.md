@@ -6,7 +6,7 @@ Network Weathermap module for [Centreon](https://github.com/centreon/centreon) a
 * PHP Network Weathermap 0.98-php8 (already included in this source with necessary tweaks)
 
 ## Installation
-* Copy **centreon-weathermap** directory into centreon's modules location `/usr/share/centreon/www/modules/`
+* Copy **centreon-weathermap** directory into centreon's modules location `/usr/share/centreon/www/modules/` and set **apache** as its owner for all subfolders
 * Grant write permission to **apache** at `/usr/share/centreon/www/modules/centreon-weathermap/src/configs`
 * Enable module on Centreon's extension manager
 
