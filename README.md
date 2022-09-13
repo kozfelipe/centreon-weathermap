@@ -34,3 +34,4 @@ You can preview active maps tabbed by groups with filter utility
 ## Similar Projects
 * [howardjones/network-weathermap](https://github.com/howardjones/network-weathermap)
 * [amousset/php-weathermap-zabbix-plugin](https://github.com/amousset/php-weathermap-zabbix-plugin)
+* [janjaaps/nagios-weathermap](https://github.com/janjaaps/nagios-weathermap)
