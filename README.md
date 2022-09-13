@@ -21,6 +21,15 @@ You may create, edit, delete, duplicate, enable/disable maps and groups by centr
 Reporting > Maps > Views
 ```
 You can preview active maps tabbed by groups with filter utility
+
+## Gallery
+
+<img src='https://user-images.githubusercontent.com/25208457/190007848-092daa65-9eba-4e92-adbe-887f930c1921.png' height=200> &nbsp;
+<img src='https://user-images.githubusercontent.com/25208457/190008969-2b45fcf3-0c57-4821-a310-bd122abc9be0.png' height=200> &nbsp;
+<img src='https://user-images.githubusercontent.com/25208457/190010041-3cfa8c65-ef72-418f-b411-7a486e6866dc.png' height=200> &nbsp;
+<img src='https://user-images.githubusercontent.com/25208457/190010566-123ceb74-732c-4a10-9a73-cf1a57ec32bd.png' height=200> &nbsp;
+<img src='https://user-images.githubusercontent.com/25208457/190011039-b0dcd42c-1031-4756-8a9d-c15a75a65d3a.png' height=200> &nbsp;
+
 ## Similar Projects
 * [howardjones/network-weathermap](https://github.com/howardjones/network-weathermap)
 * [amousset/php-weathermap-zabbix-plugin](https://github.com/amousset/php-weathermap-zabbix-plugin)
