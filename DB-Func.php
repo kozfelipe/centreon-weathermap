@@ -146,10 +146,7 @@ function insertMap($ret = array())
     }
 	
 	$filename = $confpath . trim($pearDB->escape(htmlentities($ret["name"], ENT_QUOTES, "UTF-8"))) . '.conf';
-	
-	if(!is_writable($filename))
-		exit( 'no write permission ' . $filename );
-	
+		
 	$map = new WeatherMap;
 	$map->context = 'editor';
 	$map->htmlstyle = 'overlib';
