@@ -30,7 +30,7 @@ switch($_GET['action']) {
 		break;
 	case 'viewgraph':
 		if (!isset($_GET['host_id']) || !isset($_GET['service_id']))
-			die ("Não foi possível montar o gráfico. ID do host ou o ID do serviço não foi passado.");
+			exit ("invalid data.");
 		
 		$sql = "SELECT metrics.metric_id, metrics.metric_name, services.description FROM metrics, index_data, services WHERE services.service_id=" . $pearDB->escape($_GET['service_id']) . " AND metrics.index_id=index_data.id and index_data.service_id=services.service_id AND metrics.metric_name LIKE \"%traffic%\" ORDER BY metrics.metric_id";
 		$res = $pearDB->query($sql);
