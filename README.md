@@ -8,6 +8,11 @@ Network Weathermap module for [Centreon](https://github.com/centreon/centreon) a
 ## Installation
 * Copy **centreon-weathermap** directory into centreon's modules location `/usr/share/centreon/www/modules/`
 * Grant write permission to **apache** at `/usr/share/centreon/www/modules/centreon-weathermap/src/configs`
+* Enable module on Centreon's extension manager
+
+> The module installation script will try to find the localhost (127.0.0.1) to insert the weathermap poller service
+
+## Getting Started
 
 ## Similar Projects
 * [howardjones/network-weathermap](https://github.com/howardjones/network-weathermap)
