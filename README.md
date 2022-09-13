@@ -29,7 +29,7 @@ You can preview active maps tabbed by groups with filter utility
 <img src='https://user-images.githubusercontent.com/25208457/190008969-2b45fcf3-0c57-4821-a310-bd122abc9be0.png' height=200> &nbsp;
 <img src='https://user-images.githubusercontent.com/25208457/190010041-3cfa8c65-ef72-418f-b411-7a486e6866dc.png' height=200> &nbsp;
 <img src='https://user-images.githubusercontent.com/25208457/190010566-123ceb74-732c-4a10-9a73-cf1a57ec32bd.png' height=200> &nbsp;
-<img src='https://user-images.githubusercontent.com/25208457/190011039-b0dcd42c-1031-4756-8a9d-c15a75a65d3a.png' height=200> &nbsp;
+<img src='https://user-images.githubusercontent.com/25208457/190011758-240b4aef-dea5-41f5-be01-96293962892a.png' height=200> &nbsp;
 
 ## Similar Projects
 * [howardjones/network-weathermap](https://github.com/howardjones/network-weathermap)
