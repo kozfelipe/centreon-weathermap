@@ -1,0 +1,43 @@
+<div class="headerTabContainer">
+	<ul id="mainnav">
+		{assign var=val value=1}
+		{foreach from=$tabs key=key item=group}
+		{if $val == 1}
+		<li class="a" id='c{$val}'>
+		{else}
+		<li class="b" id='c{$val}'>
+		{/if}
+			<a href="#"  style='cursor:pointer' onclick="javascript:montre('{$val}');">{$group.name}</a>
+		</li>
+		{assign var=val value=$val+1}
+		{/foreach}
+	</ul>
+</div>
+
+{assign var=val value=1}
+{foreach from=$tabs key=key item=group}
+<div id='tab{$val}' class='tab'>
+	<table class="ToolbarTable table">
+		<tr>
+			<td>
+				{$filters[$val]}
+			</td>
+		</tr>
+	</table>
+	{foreach from=$group.maps item=map}
+		<div class="viewBody">
+			<div class="widgetBody column_3">
+				<div class="portlet ui-widget ui-widget-content ui-corner-all" style="background: transparent;" id="map-anchor-{$map.id}">
+					<div class="portlet-header ui-widget-header ui-corner-all" style="cursor: default;">{$map.configfile}</div>
+					<div class="portlet-content" style="text-align: center;">
+						<a href="./main.php?p=31101&o=v&id={$map.id}">
+							<img src="./modules/centreon-weathermap/generateCentreonHoverGraph.php?action=viewthumb&id={$map.id}">
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	{/foreach}
+</div>
+{assign var=val value=$val+1}
+{/foreach}
