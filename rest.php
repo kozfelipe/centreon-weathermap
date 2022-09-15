@@ -34,8 +34,10 @@ if($_GET['object'] == 'weathermap_maps') {
 
 	if($_GET['action'] == 'list') {
 		
+		$filter = " AND configfile LIKE '%".$pearDB->escape($_GET['q'])."%'";
+		
 		if(isset($_GET['group_id']))
-			$filter = " AND weathermap_groups.id = ".$pearDB->escape($_GET['group_id'])." ";
+			$filter .= " AND weathermap_groups.id = ".$pearDB->escape($_GET['group_id'])." ";
 		
 		$query = "SELECT weathermap_maps.id, configfile AS text
 			FROM weathermap_maps
