@@ -18,7 +18,7 @@ if($_GET['object'] == 'weathermap_groups') {
 		echo json_encode($groups, TRUE);
 	}
 	if($_GET['action'] == 'defaultValues') {
-		$query = "SELECT id, name AS text FROM weathermap_groups WHERE id = ".$_GET['id'];
+		$query = "SELECT id, name AS text FROM weathermap_groups WHERE id = ".$pearDB->escape($_GET['id']);
 		$DBRESULT = $pearDB->query($query);
 		$groups = array();
 		foreach($DBRESULT->fetchAll() as $key => $item) {
