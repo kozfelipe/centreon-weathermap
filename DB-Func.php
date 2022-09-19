@@ -53,7 +53,7 @@ function testMapExistence($name = null)
     if (isset($form)) {
         $id = $form->getSubmitValue('map_id');
     }
-    $query = "SELECT id FROM weathermap_maps WHERE configfile = '" .
+    $query = "SELECT id FROM weathermap_maps WHERE name = '" .
 		$pearDB->escape(htmlentities($name, ENT_QUOTES, "UTF-8")) . "'";
     $DBRESULT = $pearDB->query($query);
     $item = $DBRESULT->fetchRow();
@@ -61,16 +61,14 @@ function testMapExistence($name = null)
     if (
 		$DBRESULT->rowCount() >= 1 && 
 		$item["id"] == $id && 
-		file_exists($confpath . $name . '.conf') && 
-		is_readable( $confpath . $name . '.conf' ) 
+		file_exists($confpath . $item["id"] . '.conf') && 
+		is_readable( $confpath . $item["id"] . '.conf' ) 
 	) { 
         return true;
     } #Duplicate entry
     elseif (
 		$DBRESULT->rowCount() >= 1 && 
-		$item["id"] != $id && 
-		file_exists($confpath . $name . '.conf') && 
-		is_readable( $confpath . $name . '.conf' )
+		$item["id"] != $id
 	) {
         return false;
     } else {
@@ -145,31 +143,32 @@ function insertMap($ret = array())
         $ret = $form->getSubmitValues();
     }
 	
-	$filename = $confpath . trim($pearDB->escape(htmlentities($ret["name"], ENT_QUOTES, "UTF-8"))) . '.conf';
-		
-	$map = new WeatherMap;
-	$map->context = 'editor';
-	$map->htmlstyle = 'overlib';
-	
-	$map->WriteConfig($filename);
-	
-	if(!isset($ret["group_id"]) || $ret["group_id"] == 0)
-		$ret["group_id"] = 1; #default group
-
-    $rq = "INSERT INTO weathermap_maps ";
-    $rq .= "(group_id, configfile) ";
+	$rq = "INSERT INTO weathermap_maps ";
+    $rq .= "(group_id, name) ";
     $rq .= "VALUES ";
     $rq .= "(' " . $pearDB->escape(htmlentities($ret["group_id"], ENT_QUOTES, "UTF-8")) . "' ,'" 
 	. $pearDB->escape(htmlentities($ret["name"], ENT_QUOTES, "UTF-8")) . "')";
     $DBRESULT = $pearDB->query($rq);
-    $DBRESULT = $pearDB->query("SELECT MAX(id) as max_id FROM weathermap_maps");
-    $map_id = $DBRESULT->fetchRow();
+	$id = $pearDB->lastInsertId();
+	
+	$filename = $confpath . $id . '.conf';
+	
+	if(!is_writable($confpath))
+		exit($confpath . ' no write permission');
+
+	$wmap = new WeatherMap;
+	$wmap->context = 'editor';
+	$wmap->htmlstyle = 'overlib';
+	$wmap->WriteConfig($filename);
+	
+	if(!isset($ret["group_id"]) || $ret["group_id"] == 0)
+		$ret["group_id"] = 1; #default group
 
     $fields = array();
     $fields = CentreonLogAction::prepareChanges($ret);
-    $oreon->CentreonLogAction->insertLog("weathermap_maps", $map_id['max_id'], $fields['name'], 'a', $fields);
+    $oreon->CentreonLogAction->insertLog("weathermap_maps", $id, $fields['name'], 'a', $fields);
 
-    return ($map_id["max_id"]);
+    return ($id);
 }
 
 function enableMap($map_id = null, $map_arr = array())
@@ -184,10 +183,10 @@ function enableMap($map_id = null, $map_arr = array())
         $map_arr = array($map_id => "1");
     }
     foreach ($map_arr as $key => $value) {
-        $DBRESULT = $pearDB->query("UPDATE weathermap_maps SET active = '1' WHERE id = '" . intval($key) . "'");
-        $DBRESULT2 = $pearDB->query("SELECT configfile FROM `weathermap_maps` WHERE id = '" . intval($key) . "' LIMIT 1");
-        $row = $DBRESULT2->fetchRow();
-        $centreon->CentreonLogAction->insertLog("weathermap_maps", $key, $row['configfile'], "enable");
+        $pearDB->query("UPDATE weathermap_maps SET active = '1' WHERE id = '" . intval($key) . "'");
+        $DBRESULT = $pearDB->query("SELECT name FROM `weathermap_maps` WHERE id = '" . intval($key) . "' LIMIT 1");
+        $row = $DBRESULT->fetchRow();
+        $centreon->CentreonLogAction->insertLog("weathermap_maps", $key, $row['name'], "enable");
     }
 }
 
@@ -203,10 +202,10 @@ function disableMap($map_id = null, $map_arr  = array())
         $map_arr = array($map_id => "1");
     }
     foreach ($map_arr as $key => $value) {
-        $DBRESULT = $pearDB->query("UPDATE weathermap_maps SET active = '0' WHERE id = '" . intval($key) . "'");
-        $DBRESULT2 = $pearDB->query("SELECT configfile FROM `weathermap_maps` WHERE id = '" . intval($key) . "' LIMIT 1");
-        $row = $DBRESULT2->fetchRow();
-        $centreon->CentreonLogAction->insertLog("weathermap_maps", $key, $row['configfile'], "disable");
+        $pearDB->query("UPDATE weathermap_maps SET active = '0' WHERE id = '" . intval($key) . "'");
+        $DBRESULT = $pearDB->query("SELECT name FROM `weathermap_maps` WHERE id = '" . intval($key) . "' LIMIT 1");
+        $row = $DBRESULT->fetchRow();
+        $centreon->CentreonLogAction->insertLog("weathermap_maps", $key, $row['name'], "disable");
     }
 }
 
@@ -215,21 +214,21 @@ function deleteMap($maps = array())
     global $pearDB, $oreon, $confpath, $htmlpath;
 	
     foreach ($maps as $key => $value) {
-        $query = "SELECT configfile FROM `weathermap_maps` WHERE `id` = '" .
-            $pearDB->escape($key) . "' LIMIT 1";
-        $DBRESULT2 = $pearDB->query($query);
-        $row = $DBRESULT2->fetchRow();
+		
+		$key = $pearDB->escape($key);
+        $DBRESULT = $pearDB->query("SELECT name FROM `weathermap_maps` WHERE `id` = '" . $key . "' LIMIT 1");
+        $row = $DBRESULT->fetchRow();
 
-		$filename = $confpath . $row["configfile"] . '.conf';
+		$filename = $confpath . $key . '.conf';
 		
 		if(is_file($filename)) 
 			unlink($filename);
 		
-		@unlink($htmlpath . $row["configfile"] . '.html');
-		@unlink($htmlpath . $row["configfile"] . '.png');
+		@unlink($htmlpath . $key . '.html');
+		@unlink($htmlpath . $key . '.png');
 		
-        $pearDB->query("DELETE FROM weathermap_maps WHERE id = '" . $pearDB->escape($key) . "'");
-        $oreon->CentreonLogAction->insertLog("weathermap_maps", $key, $row['configfile'], "d");
+        $pearDB->query("DELETE FROM weathermap_maps WHERE id = '" . $key . "'");
+        $oreon->CentreonLogAction->insertLog("weathermap_maps", $key, $row['name'], "d");
     }
 }
 
@@ -240,8 +239,8 @@ function deleteMapGroup($mapgroups = array())
     foreach ($mapgroups as $key => $value) {
 		$query = "SELECT name FROM `weathermap_groups` WHERE `id` = '" .
             $pearDB->escape($key) . "' LIMIT 1";
-        $DBRESULT2 = $pearDB->query($query);
-        $row = $DBRESULT2->fetchRow();
+        $DBRESULT = $pearDB->query($query);
+        $row = $DBRESULT->fetchRow();
 		
         $pearDB->query("DELETE FROM weathermap_groups WHERE id = '" . $pearDB->escape($key) . "'");
         $oreon->CentreonLogAction->insertLog("weathermap_groups", $key, $row['name'], "d");
@@ -250,21 +249,17 @@ function deleteMapGroup($mapgroups = array())
 
 function updateMap($id = null)
 {
-    global $confpath, $form, $pearDB, $oreon;
+    global $form, $pearDB, $oreon;
 
     if (!$id) {
         return;
     }
-	
-	$DBRESULT = $pearDB->query("SELECT * FROM weathermap_maps WHERE id = " . $pearDB->escape($id));
-	$map = $DBRESULT->fetch();
-	$DBRESULT->closeCursor();
 
     $ret = array();
     $ret = $form->getSubmitValues();
 
     $rq = "UPDATE weathermap_maps ";
-    $rq .= "SET configfile = '" . $pearDB->escape(htmlentities($ret["name"], ENT_QUOTES, "UTF-8")) . "', ";
+    $rq .= "SET name = '" . $pearDB->escape(htmlentities($ret["name"], ENT_QUOTES, "UTF-8")) . "', ";
     $rq .= "group_id = " . $pearDB->escape(htmlentities($ret["group_id"], ENT_QUOTES, "UTF-8")) . " ";
     $rq .= "WHERE id = '" . $pearDB->escape($id) . "'";
     $pearDB->query($rq);
@@ -272,14 +267,11 @@ function updateMap($id = null)
     $fields = CentreonLogAction::prepareChanges($ret);
     $oreon->CentreonLogAction->insertLog("weathermap_maps", $id, $fields["name"], "c", $fields);
 
-	if($map["configfile"] != $ret["name"])
-		rename($confpath . $pearDB->escape(htmlentities($map["configfile"], ENT_QUOTES, "UTF-8")) . '.conf', $confpath . $pearDB->escape(htmlentities($ret["name"], ENT_QUOTES, "UTF-8") . '.conf'));
-
 }
 
 function updateMapGroup($id = null)
 {
-    global $confpath, $form, $pearDB, $oreon;
+    global $form, $pearDB, $oreon;
 
     if (!$id) {
         return;
@@ -301,39 +293,38 @@ function multipleMap($maps = array(), $nbrDup = array())
 {
     global $confpath, $pearDB, $oreon;
 
-    foreach ($maps as $key => $value) {
-        $query = "SELECT * FROM weathermap_maps WHERE id = '" . $pearDB->escape($key) . "' LIMIT 1";
-        $DBRESULT = $pearDB->query($query);
+    foreach ($maps as $id => $map) {
+		
+        $DBRESULT = $pearDB->query("SELECT name, group_id FROM weathermap_maps WHERE id = '" . $pearDB->escape($id) . "' LIMIT 1");
         $row = $DBRESULT->fetchRow();
-        $row["id"] = '';
 
-        for ($i = 1; $i <= $nbrDup[$key]; $i++) {
+        for ($i = 1; $i <= $nbrDup[$id]; $i++) {
             $val = null;
-            foreach ($row as $key2 => $value2) {
-                $key2 == "configfile" ? ($name = $value2 = $value2 . "_" . $i) : null;
+            foreach ($row as $key => $value) {
+                $key == "name" ? ($name = $value = $value . "_" . $i) : null;
                 $val
-                    ? $val .= ($value2 != null ? (", '" . $value2 . "'") : ", NULL")
-                    : $val .= ($value2 != null ? ("'" . $value2 . "'") : "NULL");
-                if ($key2 != "id") {
-                    $fields[$key2] = $value2;
+                    ? $val .= ($value != null ? (", '" . $value . "'") : ", NULL")
+                    : $val .= ($value != null ? ("'" . $value . "'") : "NULL");
+                if ($key != "id") {
+                    $fields[$key] = $value;
                 }
-                @$fields["configfile"] = $name;
+                @$fields["name"] = $name;
             }
 
             if (testMapExistence($name)) {
 				
-                $val ? $rq = "INSERT INTO weathermap_maps VALUES (" . $val . ")" : $rq = null;
+                $val ? $rq = "INSERT INTO weathermap_maps (name, group_id) VALUES (" . $val . ")" : $rq = null;
                 $pearDB->query($rq);
-                $oreon->CentreonLogAction->insertLog("weathermap_maps", $key, $name, "a", $fields);
+				$map_id = $pearDB->lastInsertId();
+                $oreon->CentreonLogAction->insertLog("weathermap_maps", $map_id, $name, "a", $fields);
 				
-				$filename = $confpath . $pearDB->escape(htmlentities($name, ENT_QUOTES, "UTF-8")) . '.conf';
+				$filename = $confpath . $map_id . '.conf';
 	
-				$map = new WeatherMap;
-				$map->context = 'editor';
+				$wmap = new WeatherMap;
+				$wmap->context = 'editor';
+				$wmap->WriteConfig($filename);
 				
-				$map->WriteConfig($filename);
-				
-				file_put_contents($filename, file_get_contents($confpath . $row["configfile"] . '.conf'));
+				file_put_contents($filename, file_get_contents($confpath . $id . '.conf'));
 				
             }
         }

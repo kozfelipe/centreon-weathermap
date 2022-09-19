@@ -28,10 +28,10 @@
 		<div class="viewBody">
 			<div class="widgetBody column_3">
 				<div class="portlet ui-widget ui-widget-content ui-corner-all" style="background: transparent;" id="map-anchor-{$map.id}">
-					<div class="portlet-header ui-widget-header ui-corner-all" style="cursor: default;">{$map.configfile}</div>
+					<div class="portlet-header ui-widget-header ui-corner-all" style="cursor: default;">{$map.name}</div>
 					<div class="portlet-content" style="min-height: 200px; position: relative;">
 						<a href="./main.php?p=31101&o=v&id={$map.id}">
-							<img src="./modules/centreon-weathermap/generateCentreonHoverGraph.php?action=viewthumb&id={$map.id}" style="position:absolute;margin:auto; top:0;bottom:0;left:0;right:0;max-height:100%;">
+							<img src="./modules/centreon-weathermap/generateCentreonHoverGraph.php?action=viewthumb&id={$map.id}" style="position: absolute; margin: auto;  top: 0; bottom: 0; left: 0;  right: 0; max-height: 100%;">
 						</a>
 					</div>
 				</div>

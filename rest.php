@@ -18,7 +18,7 @@ if($_GET['object'] == 'weathermap_groups') {
 		echo json_encode($groups, TRUE);
 	}
 	if($_GET['action'] == 'defaultValues') {
-		$query = "SELECT id, name AS text FROM weathermap_groups WHERE id = ".$pearDB->escape($_GET['id']);
+		$query = "SELECT id, name AS text FROM weathermap_groups WHERE id = ".$_GET['id'];
 		$DBRESULT = $pearDB->query($query);
 		$groups = array();
 		foreach($DBRESULT->fetchAll() as $key => $item) {
@@ -34,17 +34,17 @@ if($_GET['object'] == 'weathermap_maps') {
 
 	if($_GET['action'] == 'list') {
 		
-		$filter = " AND configfile LIKE '%".$pearDB->escape($_GET['q'])."%'";
+		$filter = " AND weathermap_maps.name LIKE '%".$pearDB->escape($_GET['q'])."%'";
 		
 		if(isset($_GET['group_id']))
 			$filter .= " AND weathermap_groups.id = ".$pearDB->escape($_GET['group_id'])." ";
 		
-		$query = "SELECT weathermap_maps.id, configfile AS text
+		$query = "SELECT weathermap_maps.id, weathermap_maps.name AS text
 			FROM weathermap_maps
 			LEFT JOIN weathermap_groups ON weathermap_groups.id = weathermap_maps.group_id
 			WHERE active = 1 
 			$filter
-			ORDER BY configfile";
+			ORDER BY weathermap_maps.name";
 		$DBRESULT = $pearDB->query($query);
 		$groups['items'] = array();
 		foreach($DBRESULT->fetchAll() as $key => $item) {

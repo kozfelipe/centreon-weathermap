@@ -18,9 +18,9 @@ else {
 
 switch ($o) {
 	case VIEW_MAP:
-		$DBRESULT = $pearDB->query("SELECT * FROM weathermap_maps WHERE id = $_GET[id] AND active = 1");
+		$DBRESULT = $pearDB->query("SELECT * FROM weathermap_maps WHERE id = " . $pearDB->escape($_GET['id']) . " AND active = 1");
 		$map = $DBRESULT->fetchRow();
-		$map['content'] = file_get_contents( "./modules/centreon-weathermap/src/output/$map[configfile].html");
+		$map['content'] = file_get_contents( "./modules/centreon-weathermap/src/output/$map[id].html");
 		$tpl = new Smarty();
 		$tpl = initSmartyTpl(__DIR__, $tpl);
 		$tpl->assign('map', $map);
@@ -61,7 +61,7 @@ switch ($o) {
 			
 			$tpl->assign("sort" . $group['id'], _($group['name']));
 			$group['maps'] = array();
-			$maps = $pearDB->query("SELECT * FROM weathermap_maps WHERE group_id = $group[id] AND active = 1 ORDER BY configfile");
+			$maps = $pearDB->query("SELECT * FROM weathermap_maps WHERE group_id = $group[id] AND active = 1 ORDER BY name");
 			while ($map = $maps->fetch()) {
 				array_push($group['maps'], $map);
 			}

@@ -89,7 +89,7 @@ $searchFilterQuery = '1';
 if (isset($search) && !empty($search)) {
     $search = str_replace('_', "\_", $search);
     $mainQueryParameters[':search_string'] = "%{$search}%";
-	$searchFilterQuery .= " AND configfile LIKE :search_string";
+	$searchFilterQuery .= " AND weathermap_maps.name LIKE :search_string";
 }
 
 // Smarty template Init
@@ -164,14 +164,18 @@ $attrBtnSuccess = array(
 );
 $form->addElement('submit', 'SearchB', _("Search"), $attrBtnSuccess);
 
-$dbResult = $pearDB->query("SELECT SQL_CALC_FOUND_ROWS *, weathermap_maps.id AS map_id 
+$dbResult = $pearDB->query("SELECT SQL_CALC_FOUND_ROWS 
+	weathermap_maps.id AS map_id, 
+	weathermap_maps.name AS map_name,
+	weathermap_maps.active,
+	weathermap_groups.name AS group_name
 	FROM weathermap_maps
 	LEFT JOIN weathermap_groups ON weathermap_maps.group_id = weathermap_groups.id
 	WHERE
 	$searchFilterQuery 
 	$sqlFilterCase 
 	$groupFilter
-	ORDER BY configfile 
+	ORDER BY weathermap_maps.name 
 	LIMIT " . $num * $limit . ", " . $limit, $mainQueryParameters);
 
 $rows = $pearDB->query("SELECT FOUND_ROWS()")->fetchColumn();
@@ -217,10 +221,10 @@ for ($i = 0; $map = $dbResult->fetch(); $i++) {
 	$elemArr[$i] = array(
 		"MenuClass" => "list_" . $style,
 		"RowMenu_select" => $selectedElements->toHtml(),
-		"RowMenu_name" => CentreonUtils::escapeSecure($map["configfile"]),
+		"RowMenu_name" => CentreonUtils::escapeSecure($map["map_name"]),
 		"RowMenu_id" => $map["map_id"],
 		"RowMenu_link" => "main.php?p=" . $p . "&o=c&map_id=" . $map['map_id'],
-		"RowMenu_group" => $map["name"],
+		"RowMenu_group" => $map["group_name"],
 		"RowMenu_status" => $map["active"] ? _("Enabled") : _("Disabled"),
 		"RowMenu_badge" => $map["active"] ? "service_ok" : "service_critical",
 		"RowMenu_options" => $moptions,

@@ -62,13 +62,9 @@ if ($o === MAP_MODIFY && isset($map_id)) {
 	
 }
 
-
-$attrsText = array("size" => "30");
-$dataset = './modules/centreon-weathermap/rest.php?object=weathermap_groups&action=list';
-
 $attrGroups = array(
     'datasourceOrigin' => 'ajax',
-    'availableDatasetRoute' => $dataset,
+    'availableDatasetRoute' => './modules/centreon-weathermap/rest.php?object=weathermap_groups&action=list',
     'multiple' => false,
 );
 
@@ -97,7 +93,7 @@ if ($o === MAP_ADD) {
 #
 ## Map information
 #
-$form->addElement('text', 'name', _("Name"), $attrsText);
+$form->addElement('text', 'name', _("Name"), array("size" => "30"));
 $form->addElement('select2', 'group_id', _("Group"), array(), $attrGroups1);
 
 #
@@ -145,7 +141,7 @@ $tpl->assign("helptext", $helptext);
 if ($o === MAP_MODIFY) {
     $subC = $form->addElement('submit', 'submitC', _("Save"), array("class" => "btc bt_success"));
     $res = $form->addElement('reset', 'reset', _("Reset"), array("class" => "btc bt_default"));
-    $form->setDefaults(array('name' => $map['configfile'], 'map_id' => $map['id']));
+    $form->setDefaults(array('name' => $map['name'], 'map_id' => $map['id']));
 } # Add a Map
 elseif ($o === MAP_ADD) {
     $subA = $form->addElement('submit', 'submitA', _("Save"), array("class" => "btc bt_success"));

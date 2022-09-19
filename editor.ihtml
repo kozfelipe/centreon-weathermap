@@ -4,12 +4,12 @@
     </tr>
     <tr>
         <td class='list_lvl_1' colspan='2'>
-            <p>{$configname}&nbsp;</p>
+            <p>{$name}&nbsp;</p>
         </td>
     </tr>
 	 <tr>
         <td colspan='2' height="100%">
-            <iframe src="modules/centreon-weathermap/src/editor.php?mapname={$configname}.conf" width="100%" height="100%"></iframe>
+            <iframe src="modules/centreon-weathermap/src/editor.php?mapname={$mapid}.conf" width="100%" height="100%"></iframe>
         </td>
     </tr>
  </table>

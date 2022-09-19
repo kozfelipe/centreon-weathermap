@@ -16,31 +16,33 @@ $weathermap_path = "/usr/share/centreon/www/modules/centreon-weathermap/src";
 $DBRESULT = $pearDB->query("SELECT value AS path FROM `centreon`.`options` WHERE `key` LIKE 'rrdtool_path_bin'");
 $rrdtool = $DBRESULT->fetchRow();
 
-$DBRESULT = $pearDB->query("SELECT configfile, weathermap_groups.name AS groupname 
+$DBRESULT = $pearDB->query("SELECT weathermap_maps.name AS map_name, weathermap_groups.name AS group_name, weathermap_maps.id 
 	FROM centreon.weathermap_maps 
 	JOIN centreon.weathermap_groups ON weathermap_maps.group_id = weathermap_groups.id 
 	WHERE active = 1
+	ORDER BY last_poll ASC
+	LIMIT 200
 ");
 $maps = $DBRESULT->fetchAll();
 
 foreach($maps as $map) {
 
-	print "processing $map[configfile]\n";	
+	print "processing $map[map_name]\n";	
 		
-	$configfile = "$weathermap_path/configs/$map[configfile].conf";
-	$imagefile = "$weathermap_path/output/$map[configfile].png";
-	$htmlfile = "$weathermap_path/output/$map[configfile].html";
+	$configfile = "$weathermap_path/configs/$map[id].conf";
+	$imagefile = "$weathermap_path/output/$map[id].png";
+	$htmlfile = "$weathermap_path/output/$map[id].html";
 	
 	$wmap = new Weathermap;
 	$wmap->context = "cli";
 	$wmap->htmlstyle = "overlib";
 	$wmap->rrdtool  = $rrdtool['path'];
-	$wmap->add_hint("mapgroup", $map['groupname']);
-	$wmap->imageuri = "./modules/centreon-weathermap/src/output/$map[configfile].png";
+	$wmap->add_hint("mapgroup", $map['group_name']);
+	$wmap->imageuri = "./modules/centreon-weathermap/src/output/$map[id].png";
 	if($wmap->ReadConfig($configfile)) {
 		
 		$wmap->ReadData();
-		$wmap->DrawMap($imagefile, "$weathermap_path/output/$map[configfile]_thumb.png");
+		$wmap->DrawMap($imagefile, "$weathermap_path/output/$map[id]_thumb.png");
 		$wmap->imagefile=$imagefile;
 				
 		$fd = fopen($htmlfile, 'w') or die('Could not open file');
@@ -56,6 +58,8 @@ foreach($maps as $map) {
 		fwrite($fd, $wmap->MakeHTML());
 		fclose ($fd);
 	}
+	
+	$pearDB->query("UPDATE weathermap_maps SET last_poll = CURRENT_TIMESTAMP() WHERE id = $map[id]");
 	
 }
 
