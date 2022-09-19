@@ -106,12 +106,7 @@ $redirect->setValue($o);
 /*
  * Form Rules
  */
-function myReplace() {
-    global $form;
-    return (str_replace(" ", "_", $form->getSubmitValue("name")));
-}
- 
-$form->applyFilter('name', 'myReplace');
+
 $form->applyFilter('__ALL__', 'myTrim');
 $form->addRule('name', _("Compulsory Name"), 'required');
 $form->addRule('group_id', _("Compulsory Name"), 'required');
