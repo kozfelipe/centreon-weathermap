@@ -54,7 +54,7 @@ function testMapExistence($name = null)
         $id = $form->getSubmitValue('map_id');
     }
     $query = "SELECT id FROM weathermap_maps WHERE name = '" .
-		$pearDB->escape(htmlentities($name, ENT_QUOTES, "UTF-8")) . "'";
+		$pearDB->escape($name) . "'";
     $DBRESULT = $pearDB->query($query);
     $item = $DBRESULT->fetchRow();
     # Modif case
@@ -87,7 +87,7 @@ function testMapGroupExistence($name = null)
         $id = $form->getSubmitValue('id');
     }
     $query = "SELECT id FROM weathermap_groups WHERE name = '" .
-        $pearDB->escape(htmlentities($name, ENT_QUOTES, "UTF-8")) . "'";
+        $pearDB->escape($name) . "'";
     $DBRESULT = $pearDB->query($query);
     $item = $DBRESULT->fetchRow();
     # Modif case
@@ -117,7 +117,7 @@ function insertMapGroup($ret = array())
     $rq = "INSERT INTO weathermap_groups ";
     $rq .= "(name) ";
     $rq .= "VALUES ";
-    $rq .= "(' " . trim($pearDB->escape(htmlentities($ret["groupname"], ENT_QUOTES, "UTF-8"))) . "' )";
+    $rq .= "(' " . trim($pearDB->escape($ret["groupname"])) . "' )";
     $DBRESULT = $pearDB->query($rq);
     $DBRESULT = $pearDB->query("SELECT MAX(id) as max_id FROM weathermap_groups");
     $map_id = $DBRESULT->fetchRow();
@@ -146,8 +146,8 @@ function insertMap($ret = array())
 	$rq = "INSERT INTO weathermap_maps ";
     $rq .= "(group_id, name) ";
     $rq .= "VALUES ";
-    $rq .= "(' " . $pearDB->escape(htmlentities($ret["group_id"], ENT_QUOTES, "UTF-8")) . "' ,'" 
-	. $pearDB->escape(htmlentities($ret["name"], ENT_QUOTES, "UTF-8")) . "')";
+    $rq .= "(' " . $pearDB->escape($ret["group_id"]) . "' ,'" 
+	. $pearDB->escape($ret["name"]) . "')";
     $DBRESULT = $pearDB->query($rq);
 	$id = $pearDB->lastInsertId();
 	
@@ -259,8 +259,8 @@ function updateMap($id = null)
     $ret = $form->getSubmitValues();
 
     $rq = "UPDATE weathermap_maps ";
-    $rq .= "SET name = '" . $pearDB->escape(htmlentities($ret["name"], ENT_QUOTES, "UTF-8")) . "', ";
-    $rq .= "group_id = " . $pearDB->escape(htmlentities($ret["group_id"], ENT_QUOTES, "UTF-8")) . " ";
+    $rq .= "SET name = '" . $pearDB->escape($ret["name"]) . "', ";
+    $rq .= "group_id = " . $pearDB->escape($ret["group_id"]) . " ";
     $rq .= "WHERE id = '" . $pearDB->escape($id) . "'";
     $pearDB->query($rq);
 
@@ -281,7 +281,7 @@ function updateMapGroup($id = null)
     $ret = $form->getSubmitValues();
 
     $rq = "UPDATE weathermap_groups ";
-    $rq .= "SET name = '" . $pearDB->escape(htmlentities($ret["groupname"], ENT_QUOTES, "UTF-8")) . "' ";
+    $rq .= "SET name = '" . $pearDB->escape($ret["groupname"]) . "' ";
     $rq .= "WHERE id = '" . $pearDB->escape($id) . "'";
     $pearDB->query($rq);
 
