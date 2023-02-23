@@ -43,8 +43,16 @@ $pearDB = new CentreonDB("centstorage");
 $base_url = "/var/lib/centreon/metrics/";
 
 if (isset($_GET['service_id'])) {
-    $sql = "SELECT metrics.metric_id, index_data.host_id FROM metrics, index_data, services WHERE services.service_id=" . $pearDB->escape($_GET['service_id']) . " AND metrics.index_id=index_data.id and index_data.service_id=services.service_id ORDER BY metrics.metric_id";
-
+    $sql = "SELECT metrics.metric_id, index_data.host_id 
+		FROM metrics, index_data, services 
+		WHERE services.service_id=" . $pearDB->escape($_GET['service_id']) . " 
+		AND metrics.index_id=index_data.id 
+		AND index_data.service_id=services.service_id 
+		AND index_data.host_id=" . $pearDB->escape($_GET['host_id']) . "
+		AND metric_name LIKE 'traffic%'
+		GROUP BY metrics.metric_id
+		ORDER BY metrics.metric_id";
+	
     $res = $pearDB->query($sql);
     $rows = $res->fetchAll();
 	
@@ -107,7 +115,7 @@ if (isset($_POST['submit'])) {
 		echo "<table class='table-ds'>";
 		foreach ($rows as $i => $row) {
 			echo "<tr class=\"row".($i%2)."\">";
-			echo "<td>" . $row['name'] . "</td><td> <a href='centreon-pick.php?service_id=" . $row['service_id'] . "&description=" . urlencode($row['name'] . ";" . $row['description']) . "'>" . $row['description'] . "</a></td>";
+			echo "<td>" . $row['name'] . "</td><td> <a href='centreon-pick.php?service_id=" . $row['service_id'] . "&host_id=" . $_POST['host'] . "&description=" . urlencode($row['name'] . ";" . $row['description']) . "'>" . $row['description'] . "</a></td>";
 			echo "</tr>";
 		}
 		echo "</table>";
