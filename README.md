@@ -9,7 +9,7 @@ Network Weathermap module for [Centreon](https://github.com/centreon/centreon) a
 * Copy **centreon-weathermap** directory into centreon's modules location `/usr/share/centreon/www/modules/` and set **apache** as its owner for all subfolders
 * Grant write permission to **apache** at `/usr/share/centreon/www/modules/centreon-weathermap/src/configs`
 * Grant write permission to **centreon-engine** at `/usr/share/centreon/www/modules/centreon-weathermap/src/output`
-* Grant enough permission to `/usr/share/centreon/www/modules/centreon-weathermap/poller.php` to reach centreonDB.class.php
+* A full permission to `/usr/share/centreon/www/modules/centreon-weathermap/poller.php` is advised
 * Enable module on Centreon's extension manager
 
 > The module installation script will try to find the localhost (127.0.0.1) in order to insert the weathermap poller service. Export the configuration files to activate this service.
