@@ -27,6 +27,7 @@ switch($_GET['action']) {
 		AND index_data.host_id = " . $pearDB->escape($_GET['host_id']) . "
 		AND metrics.index_id = index_data.id 
 		AND index_data.service_id = services.service_id 
+                AND services.host_id = " . $pearDB->escape($_GET['host_id']) . "
 		AND metrics.metric_name LIKE '%traffic%'
 		GROUP BY metrics.metric_id
 		ORDER BY metrics.metric_id";
