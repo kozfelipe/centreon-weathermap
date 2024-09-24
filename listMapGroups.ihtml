@@ -24,7 +24,9 @@
 			{ else } 
 			<td>&nbsp;</td>
 			{ /if }
-			{pagination}
+			{php}
+			   include('./include/common/pagination.php');
+			{/php}
 		</tr>
 	</table>
 
@@ -52,7 +54,9 @@
 			{ else } 
 			<td>&nbsp;</td>
 			{ /if }
-			{pagination}
+			{php}
+			   include('./include/common/pagination.php');
+			{/php}
 		</tr>
 	</table>
 	<input type='hidden' name='o' id='o' value='42'>
