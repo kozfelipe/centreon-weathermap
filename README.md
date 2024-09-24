@@ -2,7 +2,7 @@
 Network Weathermap module for [Centreon](https://github.com/centreon/centreon) adapted from Cacti's [PHP Weathermap](http://www.network-weathermap.com)
 
 ## Requirements
-* Centreon >= 22.0.4
+* Centreon 22.X / 23.X
 * PHP Network Weathermap 0.98-php8 (already included in this source with necessary tweaks)
 
 ## Installation
