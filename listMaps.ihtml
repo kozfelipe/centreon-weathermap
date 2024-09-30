@@ -70,7 +70,7 @@
 			{ else } 
 			<td>&nbsp;</td>
 			{ /if }
-			{ppagination}
+			{pagination}
 		</tr>
 	</table>
 	<input type='hidden' name='o' id='o' value='42'>
