@@ -23,7 +23,7 @@
 $module_conf['centreon-weathermap'] = [
 	'name' => "centreon-weathermap",
 	'rname' => "Centreon Weathermap",
-	'mod_release' => "22.04.0",
+	'mod_release' => "24.04.0",
 	'infos' => "PHP Weathermap for Centreon",
 	'is_removeable' => "1",
 	'author' => "Luiz Felipe Aranha",
